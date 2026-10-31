@@ -21,7 +21,7 @@ node2 - 54.252.149.65	172.31.40.28
 ssh admin@node1
 ssh admin@node2
 ###########################DEPENDENCY################################################
-	sudo apt install python3-pip python3-venv -y
+	sudo apt install python3-pip -y
 # which python3
 /usr/bin/python3    [if python3 is not installed, kindly install it]
 
@@ -35,7 +35,8 @@ pip 25.1.1 from /usr/lib/python3/dist-packages/pip (python 3.13)
 
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+using python environment for latest version ansible
+sudo apt install python3.13-venv
 python3 -m venv /home/admin/myansible
 source /home/admin/myansible/bin/activate
 
@@ -46,6 +47,9 @@ ansible --version
 
 ===============Installation of Ansible Completed =========================================
 
+sudo apt install ansible
+ansible --version
+
 # Ping all the machines with the name.
 
 myinventory.ini
@@ -53,7 +57,7 @@ myinventory.ini
 node1
 node2
 
-ansible nodes -m ping -i inventory/myinventory.ini
+---> ansible nodes -m ping -i myinventory.ini
 
 ping -> pong (successful)
 
@@ -97,7 +101,17 @@ chatgpt code
         name: apache2
         state: latest
 
+#ansible.conf
+[default]
+hostfile=hosts
+host_key_cheking=false
 
+
+utf error change /etc/locale.conf
+edit utf-8
+
+
+  ---> inventory/myinventory.ini playbook.yaml
 
 
 
