@@ -1,0 +1,371 @@
+Ansible Playbook YAML Cheat Sheet
+A quick-reference sheet for writing Ansible playbooks, from basic syntax to common tasks used in DevOps practicals.
+
+1. Basic playbook structure
+
+yaml
+---
+- name: Playbook description
+  hosts: nodes
+  become: true
+
+  vars:
+    package_name: apache2
+
+  tasks:
+    - name: Task description
+      ansible.builtin.apt:
+        name: "{{ package_name }}"
+        state: present
+Keyword
+
+Purpose
+
+---
+
+Start of YAML document
+
+- name:
+
+Name of a play or task
+
+hosts:
+
+Target host or inventory group
+
+become: true
+
+Use privilege escalation, usually sudo
+
+vars:
+
+Define variables
+
+tasks:
+
+List of tasks
+
+handlers:
+
+Tasks triggered by notifications
+
+when:
+
+Condition for running a task
+
+loop:
+
+Repeat a task over items
+
+register:
+
+Save a task's result
+
+notify:
+
+Trigger a handler
+
+tags:
+
+Label tasks for selective execution
+
+2. Common task templates
+Install a package (Debian/Ubuntu)
+
+yaml
+- name: Install Apache2
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+    update_cache: true
+Install multiple packages
+
+yaml
+- name: Install packages
+  ansible.builtin.apt:
+    name:
+      - apache2
+      - curl
+      - git
+    state: present
+Remove a package
+
+yaml
+- name: Remove Apache2
+  ansible.builtin.apt:
+    name: apache2
+    state: absent
+Start, stop, restart, or enable a service
+
+yaml
+- name: Start Apache2
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: true
+Change state as needed:
+
+started — ensure it is running.
+
+stopped — ensure it is stopped.
+
+restarted — restart it.
+
+reloaded — reload its configuration.
+
+Copy a file
+
+yaml
+- name: Copy configuration
+  ansible.builtin.copy:
+    src: files/app.conf
+    dest: /etc/app.conf
+    owner: root
+    group: root
+    mode: "0644"
+Create a directory
+
+yaml
+- name: Create directory
+  ansible.builtin.file:
+    path: /opt/myapp
+    state: directory
+    owner: root
+    mode: "0755"
+Create a user
+
+yaml
+- name: Create user
+  ansible.builtin.user:
+    name: devops
+    state: present
+    create_home: true
+Run a command
+
+yaml
+- name: Check uptime
+  ansible.builtin.command: uptime
+  changed_when: false
+Use dedicated Ansible modules when available instead of shell commands for configuration management.
+
+3. Variables
+Define variables with vars: and reference them using Jinja2 syntax.
+
+
+yaml
+- name: Install software
+  hosts: nodes
+  become: true
+
+  vars:
+    package_name: apache2
+    service_name: apache2
+
+  tasks:
+    - name: Install package
+      ansible.builtin.apt:
+        name: "{{ package_name }}"
+        state: present
+
+    - name: Start service
+      ansible.builtin.service:
+        name: "{{ service_name }}"
+        state: started
+Remember: {{ variable_name }} references a variable.
+
+4. Loops
+Repeat a task for multiple items.
+
+
+yaml
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apache2
+    - curl
+    - git
+Loop over users:
+
+
+yaml
+- name: Create users
+  ansible.builtin.user:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - user1
+    - user2
+    - user3
+5. Conditions (when)
+Run a task only when a condition is true.
+
+
+yaml
+- name: Install Apache on Debian family
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+  when: ansible_facts['os_family'] == "Debian"
+Common conditions:
+
+
+yaml
+when: my_variable == "yes"
+when: my_variable != "no"
+when: ansible_facts['os_family'] == "Debian"
+when: my_variable is defined
+6. Register task output
+Save output from a task and use it later.
+
+
+yaml
+tasks:
+  - name: Check disk space
+    ansible.builtin.command: df -h
+    register: disk_output
+    changed_when: false
+
+  - name: Display output
+    ansible.builtin.debug:
+      var: disk_output.stdout
+Useful options:
+
+register: — save task results.
+
+debug: — display a value.
+
+changed_when: false — report the task as unchanged.
+
+failed_when: — define a custom failure condition.
+
+7. Handlers and notifications
+A handler runs when a task notifies it, normally when the notifying task reports a change.
+
+
+yaml
+tasks:
+  - name: Copy Apache configuration
+    ansible.builtin.copy:
+      src: files/apache2.conf
+      dest: /etc/apache2/apache2.conf
+    notify: Restart Apache
+
+handlers:
+  - name: Restart Apache
+    ansible.builtin.service:
+      name: apache2
+      state: restarted
+8. Loops, conditions, and privilege escalation together
+
+yaml
+---
+- name: Configure web servers
+  hosts: nodes
+  become: true
+
+  vars:
+    packages:
+      - apache2
+      - curl
+
+  tasks:
+    - name: Install packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      loop: "{{ packages }}"
+
+    - name: Start Apache
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: true
+      when: ansible_facts['os_family'] == "Debian"
+9. Tags
+Run selected tasks by tag.
+
+
+yaml
+tasks:
+  - name: Install Apache
+    ansible.builtin.apt:
+      name: apache2
+      state: present
+    tags: install
+
+  - name: Start Apache
+    ansible.builtin.service:
+      name: apache2
+      state: started
+    tags: service
+Commands:
+
+
+bash
+ansible-playbook playbook.yaml --tags install
+ansible-playbook playbook.yaml --tags service
+ansible-playbook playbook.yaml --list-tags
+10. Error handling
+
+yaml
+tasks:
+  - name: Run a command
+    ansible.builtin.command: /usr/bin/example
+    register: command_result
+    ignore_errors: true
+
+  - name: Show result
+    ansible.builtin.debug:
+      var: command_result
+ignore_errors: true allows execution to continue after a task failure, but use it only when that failure is acceptable.
+
+11. Validate and execute playbooks
+Purpose
+
+Command
+
+Check syntax
+
+ansible-playbook -i inventory/myinventory.ini playbook.yaml --syntax-check
+
+List tasks
+
+ansible-playbook -i inventory/myinventory.ini playbook.yaml --list-tasks
+
+List targeted hosts
+
+ansible nodes -i inventory/myinventory.ini --list-hosts
+
+Preview supported changes
+
+ansible-playbook -i inventory/myinventory.ini playbook.yaml --check
+
+Execute playbook
+
+ansible-playbook -i inventory/myinventory.ini playbook.yaml
+
+Ask for sudo password
+
+ansible-playbook -i inventory/myinventory.ini playbook.yaml --ask-become-pass
+
+12. YAML rules specific to writing playbooks
+Use spaces for indentation, not tabs.
+
+Keep indentation consistent, commonly two spaces per level.
+
+Put a space after each colon: name: apache2.
+
+Start each task with - name:.
+
+Keep module parameters nested under the module.
+
+Quote Jinja2 expressions when used as YAML string values: name: "{{ package_name }}".
+
+Quote file permissions: mode: "0644".
+
+Use fully qualified module names, such as ansible.builtin.apt.
+
+The most important patterns to memorize first: hosts, become, tasks, apt, service, copy, file, vars, loop, when, register, and handlers. These cover many everyday Ansible playbooks.

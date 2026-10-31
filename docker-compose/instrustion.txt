@@ -1,0 +1,13 @@
+packages tree docker.io docker-compose
+sudo usermod admin -aG docker --> then reboot
+
+project
+    ├── docker-compose.yml
+    ├── rproxy
+    │   └── nginx.conf
+    ├── web1
+    │   └── index.html
+    └── web2
+        └── index.html
+
+docker compose up -d

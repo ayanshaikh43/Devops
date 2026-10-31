@@ -1,0 +1,7 @@
+Query							Description
+################################################################
+up							Whether monitoring targets are reachable
+node_cpu_seconds_total					CPU time metrics
+node_memory_MemAvailable_bytes				Available RAM
+node_filesystem_avail_bytes				Available filesystem space
+rate(node_network_receive_bytes_total[5m])		Network receive rate
