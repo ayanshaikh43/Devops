@@ -1,0 +1,24 @@
+docker swarm 
+
+3 EC2 instance 
+change host name 
+update pkg
+install docker.io 
+add docker grp admin
+
+
+master -->
+docker swarm init 
+
+node -->
+docer swarm join (paste op of init cmd)
+
+master -->
+docker pull username/repo_name
+docker service create --name myweb -p 80:80 username/repo_name
+
+docker service scale myweb=3
+docker service ps myweb
+
+for exit docker service-->
+docer swarm leave --force 
