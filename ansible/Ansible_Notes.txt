@@ -111,7 +111,7 @@ utf error change /etc/locale.conf
 edit utf-8
 
 
-  ---> inventory/myinventory.ini playbook.yaml
+  ---> ansible-playbook -i inventory/myinventory.ini playbook.yaml
 
 
 
