@@ -14,6 +14,8 @@ CMD ["apachectl", "-D", "FOREGROUND"]
 #docker build -t myweb .
 #docker run -d -p 80:80 --name mycon myweb
 
+#docker stop myweb
+#docker start myweb 
 
 #ss -antp (listen port)
 #docker rmi img_n
