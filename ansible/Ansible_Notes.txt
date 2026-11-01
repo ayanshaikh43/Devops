@@ -2,67 +2,48 @@
 
 [3 -> key -> ansible.ppk]
 
-Server - 16.176.1.167 	172.31.42.100
-node1 - 3.107.222.113	172.31.43.88
-node2 - 54.252.149.65	172.31.40.28
-
-
 # Connect all the instances with PuTTy
 # Change the hostname
 	sudo hostnamectl set-hostname server
 	sudo hostnamectl set-hostname node1
 	sudo hostnamectl set-hostname node2
 	
-# Update and Upgrade all the machines.
 	sudo apt update && sudo apt upgrade
+
 #ssh-keygen
 	paste key public key on node1 and node2 .ssh/authorized_keys
+
 #check server side
 ssh admin@node1
 ssh admin@node2
-###########################DEPENDENCY################################################
-	sudo apt install python3-pip -y
-# which python3
-/usr/bin/python3    [if python3 is not installed, kindly install it]
-
-# which pip
-/usr/bin/pip		[in case pip is not there, install it with 'apt install pip']
-######################################################################################
-
-
-pip -V 		[To check version of pip]
-pip 25.1.1 from /usr/lib/python3/dist-packages/pip (python 3.13)
-
-
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 using python environment for latest version ansible
 sudo apt install python3.13-venv
 python3 -m venv /home/admin/myansible
 source /home/admin/myansible/bin/activate
-
-cd /home/admin/myansible
-
-pip install ansible
-ansible --version
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ===============Installation of Ansible Completed =========================================
+cd /home/admin/myansible
 
-sudo apt install ansible
+sudo apt install python3-pip -y
+sudo apt install ansible -y
 ansible --version
 
+config static dns /etc/hosts
 # Ping all the machines with the name.
 
 myinventory.ini
 [nodes]
 node1
 node2
-
----> ansible nodes -m ping -i myinventory.ini
+------------------------------------------------------------------------------
+---> ansible nodes -m ping -i my.ini
 
 ping -> pong (successful)
 
 
-###########
+############################################
 playbook.yaml
 
 chatgpt code
@@ -86,7 +67,7 @@ chatgpt code
         name: apache2
         state: started
         enabled: true
-
+###############################################
 #sir's code
 - name: Install Tree
   hosts: nodes
@@ -100,18 +81,16 @@ chatgpt code
       ansible.builtin.apt:
         name: apache2
         state: latest
-
+############################################
 #ansible.conf
 [default]
 hostfile=hosts
 host_key_cheking=false
 
 
+---------------------------------------------------------------------------------------------------------------------
+  ---> ansible-playbook -i my.ini playbook.yaml
+
 utf error change /etc/locale.conf
 edit utf-8
-
-
-  ---> ansible-playbook -i inventory/myinventory.ini playbook.yaml
-
-
 
