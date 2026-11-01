@@ -1,0 +1,17 @@
+nginx/apache2/httpd
+  mkdir project1
+  cd project
+  ----------------------------------------------
+  docker serch pkg_n
+  docker pull ubuntu/ngnix
+  docker pull ubuntu/apache2
+  docker pull httpd 
+  ---------------------------------------------
+  docker run -d -p 80:80 myweb nginx
+  docker run -d -p 81:80 myweb1 apache2
+  docker run -d -p 82:80 myweb2 httpd
+  --------------------------------------------
+    docker cp index.html myweb:/usr/share/nginx/html/
+    docker cp index.html myweb:/var/www/html/
+    docker cp index.html myweb:/usr/local/apache2/htdocs/
+      --------------------------------------------------------
